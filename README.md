@@ -60,7 +60,7 @@ The Cajueiro is not merely a visual: it is the **physical root** of the entire P
 - **Main Framework**: https://sluing.github.io/neuro/SBM/1080.html (AXLE Theorem Registry)
 - **GitHub Organization**: https://github.com/TOTOGT
 - **Lean 4 Formalization**: https://totogt.github.io/AXLE
-- **Zenodo Papers**: 
+- **Zenodo Papers**: https://zenodo.org/records/20710023
 ## License
 
 - Code: MIT
