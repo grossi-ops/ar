@@ -13,14 +13,14 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 html,body{
-  width:100vw;height:100vh;overflow:hidden;
+  width:100%;overflow-x:hidden;
   background:var(--void);color:var(--text);
   font-family:Georgia,'Times New Roman',serif;
-  display:flex;align-items:center;justify-content:center;
 }
 
 .container{
-  max-width:600px;padding:2rem;text-align:center;
+  max-width:600px;margin:0 auto;padding:2rem 2rem;text-align:center;min-height:100vh;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
 }
 
 .eyebrow{
@@ -40,15 +40,16 @@ h1 em{
 .qr-box{
   background:var(--text);border-radius:12px;padding:2rem;
   margin:2rem 0;box-shadow:0 10px 40px rgba(201,168,76,.2);
+  width:100%;max-width:350px;
 }
 
 .qr-box img{
-  width:100%;max-width:300px;height:auto;display:block;
+  width:100%;height:auto;display:block;
 }
 
 .instructions{
   font-size:.95rem;color:var(--dim);line-height:1.8;
-  margin:2rem 0;font-style:italic;
+  margin:2rem 0;font-style:italic;max-width:500px;
 }
 
 .instructions strong{
@@ -80,7 +81,7 @@ h1 em{
 .brand{
   position:fixed;top:1rem;left:1rem;
   font-family:'Courier New',monospace;font-size:.55rem;letter-spacing:.2em;
-  color:var(--gold);text-decoration:none;
+  color:var(--gold);text-decoration:none;z-index:10;
 }
 </style>
 </head>
