@@ -135,16 +135,14 @@ a-scene{width:100vw;height:100vh;}
      O cajueiro de Pirangi aparece em cima dele e fica lá enquanto você se mexe.
      Tire selfie.</p>
   <button onclick="startAR()">⌁ Começar</button>
-    <img src="qr-target.mind" alt="QR code" style="width:200px;display:block;margin:1rem auto;">
+  <img src="qr_with_tree.png" alt="QR code" style="width:200px;display:block;margin:1rem auto;">
 
   <div class="hint">Funciona em Safari (iOS) e Chrome (Android)</div>
-    <img src="qr-target.mind" alt="QR code" style="width:200px;display:block;margin:1rem auto;">
 
 </div>
 
 <!-- Hint shown once camera is active but no QR detected yet -->
 <div class="hint-overlay" id="hint">⌁ Aponte para o QR ⌁</div>
-  <img src="qr_with_tree.png" alt="QR code" style="width:200px;display:block;margin:1rem auto;">
 
 <!-- "Selfie!" prompt once target is found -->
 <div class="selfie-prompt" id="selfie">⌁ Selfie! ⌁</div>
@@ -155,12 +153,12 @@ a-scene{width:100vw;height:100vh;}
 <!-- ═══════════════════════ AR SCENE ═══════════════════════ -->
 <a-scene
   id="scene"
-  mindar-image="imageTargetSrc: ./qr-target.mind; autoStart: false; uiLoading: no; uiError: no; uiScanning: no;"
+  mindar-image="imageTargetSrc: ./qr-target.mind; autoStart: true; uiLoading: no; uiError: no; uiScanning: no;"
   color-space="sRGB"
   embedded
   renderer="colorManagement: true; physicallyCorrectLights: true; antialias: true;"
-  vr-mode-ui="enabled: false"
-  device-orientation-permission-ui="enabled: false"
+  vr-mode-ui="enabled: true"
+  device-orientation-permission-ui="enabled: true"
   style="display:none;">
 
   <a-assets>
