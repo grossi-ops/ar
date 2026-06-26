@@ -5,36 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>O Cajueiro · AR · Principia Orthogona</title>
 <meta name="description" content="Aponte sua câmera para o QR. O cajueiro aparece. Tire selfies.">
-
-<!--
-  ════════════════════════════════════════════════════════════════════════════
-  IMAGE-TRACKING AR — the QR code is the tracker target,
-  and the MP4 video plays as a floating screen on top of it.
-  ════════════════════════════════════════════════════════════════════════════
-
-  Files this page expects in the same directory:
-
-    index.html         (this file)
-    qr-target.mind     (compiled AR tracking target)
-    cajueiro.mp4       (your video — self-hosted or external URL)
-    qr_with_tree.png   (optional — the printable QR)
-
-  ────────────────────────────────────────────────────────────────────────────
-  CORS & VIDEO STREAMING FIX:
-  
-  If videos won't play:
-    1. Verify cajueiro.mp4 is served with CORS headers (Content-Type: video/mp4)
-    2. Use raw.githubusercontent.com URLs if on GitHub Pages
-    3. For reliable streaming, host video on a CDN (Vultr, Cloudflare, etc.)
-
-  ════════════════════════════════════════════════════════════════════════════
--->
-
-<!-- A-Frame -->
-<script src="https://cdn.jsdelivr.net/npm/aframe@1.5.0/dist/aframe-master.min.js"></script>
-<!-- MindAR image tracking -->
-<script src="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.5/dist/mindar-image-aframe.prod.js"></script>
-
 <style>
 :root {
   --void: #03030a; --gold: #c9a84c; --gold2: #e8d49a;
@@ -46,241 +16,104 @@ html,body{
   width:100vw;height:100vh;overflow:hidden;
   background:var(--void);color:var(--text);
   font-family:Georgia,'Times New Roman',serif;
+  display:flex;align-items:center;justify-content:center;
 }
 
-/* PERMISSION GATE */
-.gate{
-  position:fixed;inset:0;z-index:100;
-  background:radial-gradient(ellipse 60% 50% at 50% 40%,rgba(45,90,39,.20) 0%,transparent 60%),var(--void);
-  display:flex;flex-direction:column;justify-content:center;align-items:center;
-  padding:2rem;text-align:center;transition:opacity .6s;
+.container{
+  max-width:600px;padding:2rem;text-align:center;
 }
-.gate.hidden{opacity:0;pointer-events:none;}
-.gate .icon{font-size:3rem;margin-bottom:1.2rem;filter:drop-shadow(0 0 18px rgba(92,176,76,.4));}
-.gate .eyebrow{font-family:'Courier New',monospace;font-size:.6rem;letter-spacing:.35em;
-  text-transform:uppercase;color:var(--green2);margin-bottom:1rem;}
-.gate h1{font-size:clamp(1.5rem,5vw,2rem);font-weight:300;line-height:1.25;
-  margin-bottom:1rem;max-width:460px;}
-.gate h1 em{font-style:italic;color:var(--gold);}
-.gate p{font-size:.95rem;color:var(--dim);font-style:italic;max-width:420px;
-  margin-bottom:2rem;line-height:1.7;}
-.gate button{background:var(--gold);color:var(--void);
+
+.eyebrow{
+  font-family:'Courier New',monospace;font-size:.6rem;letter-spacing:.35em;
+  text-transform:uppercase;color:var(--green2);margin-bottom:2rem;
+}
+
+h1{
+  font-size:clamp(1.5rem,5vw,2.5rem);font-weight:300;line-height:1.25;
+  margin-bottom:1.5rem;
+}
+
+h1 em{
+  font-style:italic;color:var(--gold);
+}
+
+.qr-box{
+  background:var(--text);border-radius:12px;padding:2rem;
+  margin:2rem 0;box-shadow:0 10px 40px rgba(201,168,76,.2);
+}
+
+.qr-box img{
+  width:100%;max-width:300px;height:auto;display:block;
+}
+
+.instructions{
+  font-size:.95rem;color:var(--dim);line-height:1.8;
+  margin:2rem 0;font-style:italic;
+}
+
+.instructions strong{
+  color:var(--gold);font-style:normal;
+}
+
+.button-group{
+  display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;
+  margin-top:2rem;
+}
+
+.btn{
+  background:var(--gold);color:var(--void);
   font-family:'Courier New',monospace;font-size:.8rem;font-weight:700;
-  letter-spacing:.18em;text-transform:uppercase;padding:1rem 2rem;border:none;
-  border-radius:3px;cursor:pointer;transition:transform .15s;
-  box-shadow:0 6px 24px rgba(201,168,76,.4);}
-.gate button:active{transform:scale(.97);}
-.gate .hint{margin-top:2rem;font-family:'Courier New',monospace;font-size:.58rem;
-  letter-spacing:.15em;color:var(--dim);text-transform:uppercase;}
-
-/* SCANNING HINT */
-.hint-overlay{
-  position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);
-  z-index:50;padding:.9rem 1.4rem;background:rgba(3,3,10,.85);
-  backdrop-filter:blur(8px);border:1px solid var(--rule);border-radius:3px;
-  font-family:'Courier New',monospace;font-size:.68rem;letter-spacing:.12em;
-  color:var(--gold);text-align:center;pointer-events:none;
-  opacity:0;transition:opacity .5s;
+  letter-spacing:.18em;text-transform:uppercase;padding:1rem 1.5rem;
+  border:none;border-radius:3px;cursor:pointer;transition:transform .15s;
+  box-shadow:0 6px 24px rgba(201,168,76,.4);text-decoration:none;
+  display:inline-block;
 }
-.hint-overlay.show{opacity:1;}
 
-/* BRAND MINI */
-.brand-mini{
-  position:fixed;top:1rem;left:1rem;z-index:50;
+.btn:active{transform:scale(.97);}
+.btn.secondary{background:transparent;border:1px solid var(--gold);color:var(--gold);}
+
+.hint{
+  margin-top:2rem;font-family:'Courier New',monospace;font-size:.58rem;
+  letter-spacing:.15em;color:var(--dim);text-transform:uppercase;
+}
+
+.brand{
+  position:fixed;top:1rem;left:1rem;
   font-family:'Courier New',monospace;font-size:.55rem;letter-spacing:.2em;
-  color:var(--gold);background:rgba(3,3,10,.75);padding:.5rem .8rem;
-  border-radius:2px;text-decoration:none;backdrop-filter:blur(8px);
+  color:var(--gold);text-decoration:none;
 }
-
-/* SHARE / SELFIE PROMPT after target is found */
-.selfie-prompt{
-  position:fixed;bottom:5.5rem;left:50%;transform:translateX(-50%);
-  z-index:50;padding:.7rem 1.2rem;background:rgba(201,168,76,.95);
-  color:var(--void);border-radius:3px;
-  font-family:'Courier New',monospace;font-size:.65rem;letter-spacing:.12em;
-  text-transform:uppercase;font-weight:700;
-  opacity:0;transition:opacity .8s;pointer-events:none;
-}
-.selfie-prompt.show{opacity:1;}
-
-a-scene{width:100vw;height:100vh;}
 </style>
 </head>
 <body>
 
-<!-- ═══════════════════════ WELCOME GATE ═══════════════════════ -->
-<div class="gate" id="gate">
-  <div class="icon">🌳</div>
+<a href="https://grossi-ops.github.io/" class="brand">⚜ PRINCIPIA ORTHOGONA</a>
+
+<div class="container">
   <div class="eyebrow">⌁ Realidade Aumentada · Cajueiro ⌁</div>
+  
   <h1>Aponte sua câmera para o QR.<br><em>O cajueiro aparece.</em></h1>
-  <p>Permita o acesso à câmera. Mire o código que você acabou de escanear.
-     O cajueiro de Pirangi aparece em cima dele e fica lá enquanto você se mexe.
-     Tire selfie.</p>
-  <button onclick="startAR()">⌁ Começar</button>
-
+  
+  <div class="qr-box">
+    <img src="https://raw.githubusercontent.com/grossi-ops/ar/main/qr_with_tree.png" alt="QR Code - O Cajueiro AR">
+  </div>
+  
+  <div class="instructions">
+    <strong>Como usar:</strong><br>
+    1. Imprima este código QR ou exiba na tela<br>
+    2. Clique em "Abrir AR" abaixo<br>
+    3. Permita acesso à câmera<br>
+    4. Aponte para o QR<br>
+    5. O cajueiro de Pirangi aparece em 3D<br>
+    6. Tire selfie!
+  </div>
+  
+  <div class="button-group">
+    <a href="./cajueiro-ar.html" class="btn">⌁ Abrir AR</a>
+    <a href="https://github.com/grossi-ops/ar" class="btn secondary">GitHub</a>
+  </div>
+  
   <div class="hint">Funciona em Safari (iOS) e Chrome (Android)</div>
-
 </div>
-
-<!-- Hint shown once camera is active but no QR detected yet -->
-<div class="hint-overlay" id="hint">⌁ Aponte para o QR ⌁</div>
-
-<!-- "Selfie!" prompt once target is found -->
-<div class="selfie-prompt" id="selfie">⌁ Selfie! ⌁</div>
-
-<!-- Brand strip while AR is active -->
-<a href="https://grossi-ops.github.io/" class="brand-mini" id="brand" style="display:none;">⚜ PRINCIPIA ORTHOGONA</a>
-
-<!-- ═══════════════════════ AR SCENE ═══════════════════════ -->
-<a-scene
-  id="scene"
-  mindar-image="imageTargetSrc: ./qr-target.mind; autoStart: false; uiLoading: no; uiError: no; uiScanning: no;"
-  color-space="sRGB"
-  embedded
-  renderer="colorManagement: true; physicallyCorrectLights: true; antialias: true;"
-  vr-mode-ui="enabled: false"
-  device-orientation-permission-ui="enabled: false"
-  style="display:none;">
-
-  <a-assets>
-    <!-- Self-hosted MP4 via GitHub raw CDN for CORS compatibility -->
-    <video
-      id="cajueiro-video"
-      src="https://raw.githubusercontent.com/grossi-ops/ar/main/cajueiro.mp4"
-      preload="auto"
-      loop
-      muted
-      playsinline
-      webkit-playsinline
-      crossorigin="anonymous"
-    ></video>
-  </a-assets>
-
-  <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
-
-  <!-- Everything inside this entity is anchored to the detected QR -->
-  <a-entity mindar-image-target="targetIndex: 0">
-
-    <!-- Golden ring on the ground plane marking where the QR is -->
-    <a-entity position="0 0 0" rotation="-90 0 0">
-      <a-ring radius-inner="0.46" radius-outer="0.50" color="#c9a84c"
-              opacity="0.6"
-              material="emissive: #c9a84c; emissiveIntensity: 0.4"></a-ring>
-    </a-entity>
-
-    <!-- THE VIDEO SCREEN — floats above the QR, slightly tilted toward the viewer -->
-    <a-video
-      id="video-plane"
-      src="#cajueiro-video"
-      width="1.6"
-      height="0.9"
-      position="0 0.95 0"
-      rotation="-12 0 0"
-      material="emissive: #ffffff; emissiveIntensity: 0.15; metalness: 0; roughness: 0.5"
-      animation__intro="property: scale; from: 0 0 0; to: 1 1 1; dur: 900; easing: easeOutBack; startEvents: targetFound"
-      animation__breath="property: position; from: 0 0.95 0; to: 0 0.98 0; dur: 4000; dir: alternate; loop: true; easing: easeInOutSine;"
-    ></a-video>
-
-    <!-- A subtle gold frame around the video screen -->
-    <a-entity position="0 0.95 -0.001" rotation="-12 0 0"
-      animation__intro="property: scale; from: 0 0 0; to: 1 1 1; dur: 1100; easing: easeOutBack; startEvents: targetFound">
-      <a-plane width="1.66" height="0.96" color="#c9a84c"
-               material="emissive: #c9a84c; emissiveIntensity: 0.6; transparent: true; opacity: 0.95"></a-plane>
-    </a-entity>
-
-    <!-- "O CAJUEIRO · κ" label below the video -->
-    <a-text
-      value="O CAJUEIRO · κ"
-      align="center"
-      position="0 0.30 0.30"
-      rotation="-30 0 0"
-      width="2.2"
-      color="#c9a84c"
-      animation__intro="property: opacity; from: 0; to: 1; dur: 800; delay: 400; startEvents: targetFound"
-    ></a-text>
-
-    <!-- Subtle particle accents — small glowing spheres orbiting -->
-    <a-entity animation="property: rotation; from: 0 0 0; to: 0 360 0; dur: 14000; loop: true; easing: linear;">
-      <a-sphere position="0.85 0.95 0" radius="0.025" color="#5cb04c"
-                material="emissive: #5cb04c; emissiveIntensity: 0.8" opacity="0.85"></a-sphere>
-      <a-sphere position="-0.85 0.95 0" radius="0.025" color="#c9a84c"
-                material="emissive: #c9a84c; emissiveIntensity: 0.8" opacity="0.85"></a-sphere>
-      <a-sphere position="0 0.95 0.85" radius="0.020" color="#e8d49a"
-                material="emissive: #e8d49a; emissiveIntensity: 0.8" opacity="0.85"></a-sphere>
-      <a-sphere position="0 0.95 -0.85" radius="0.020" color="#3a7a32"
-                material="emissive: #3a7a32; emissiveIntensity: 0.8" opacity="0.85"></a-sphere>
-    </a-entity>
-
-  </a-entity>
-</a-scene>
-
-<script>
-  async function startAR() {
-    const gate = document.getElementById('gate');
-    const scene = document.getElementById('scene');
-    const hint = document.getElementById('hint');
-    const brand = document.getElementById('brand');
-    const selfie = document.getElementById('selfie');
-    const video = document.getElementById('cajueiro-video');
-
-    scene.style.display = 'block';
-    gate.classList.add('hidden');
-    brand.style.display = 'block';
-
-    await new Promise(r => setTimeout(r, 100));
-
-    const ar = scene.systems['mindar-image-system'];
-    try {
-      await ar.start();
-      hint.classList.add('show');
-
-      scene.addEventListener('targetFound', () => {
-        hint.classList.remove('show');
-        selfie.classList.add('show');
-        // Play the video once the QR is detected
-        video.play().catch(e => console.warn('Video play deferred:', e));
-        // Hide the selfie prompt after a few seconds
-        setTimeout(() => selfie.classList.remove('show'), 3500);
-      });
-
-      scene.addEventListener('targetLost', () => {
-        hint.classList.add('show');
-        video.pause();
-      });
-
-      // Tap anywhere to unmute (browsers require user gesture for audio)
-      let muted = true;
-      document.addEventListener('click', () => {
-        if (muted) {
-          video.muted = false;
-          muted = false;
-        }
-      }, { once: false });
-
-    } catch (e) {
-      console.error('AR failed:', e);
-      gate.classList.remove('hidden');
-      gate.querySelector('h1').textContent = 'Câmera negada ou indisponível.';
-      gate.querySelector('p').textContent = 'Permita o acesso à câmera nas configurações do navegador e recarregue.';
-    }
-  }
-
-  // Graceful 404 detection for missing .mind file
-  window.addEventListener('error', (e) => {
-    if (e.message && (e.message.includes('qr-target.mind') || e.message.includes('cajueiro.mp4'))) {
-      const gate = document.getElementById('gate');
-      const missing = e.message.includes('qr-target.mind') ? 'qr-target.mind' : 'cajueiro.mp4';
-      gate.classList.remove('hidden');
-      gate.querySelector('h1').textContent = 'AR ainda não pronta.';
-      gate.querySelector('p').innerHTML =
-        'Arquivo ausente: <code style="color:#c9a84c;">' + missing + '</code>. ' +
-        (missing === 'qr-target.mind'
-          ? 'Compile o QR em <a href="https://hiukim.github.io/mind-ar-js-doc/tools/compile" target="_blank" style="color:#c9a84c;">hiukim.github.io/mind-ar-js-doc/tools/compile</a> e coloque ao lado deste arquivo.'
-          : 'Faça upload de cajueiro.mp4 (o vídeo do cajueiro) nesta mesma pasta.');
-      gate.querySelector('button').style.display = 'none';
-    }
-  }, true);
-</script>
 
 </body>
 </html>
