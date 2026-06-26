@@ -2,11 +2,11 @@
 
 **Augmented Reality Experience for the Principia Orthogona / TOGT / dm³ Framework**
 
-This repository delivers an interactive Augmented Reality (AR) installation featuring the iconic **Cajueiro** (cashew tree) from Pirangi, RN, Brazil — the living embodiment and central metaphor of the **dm³ dynamical system** (Discrete Mathematical³) and the generative four/five-operator cycle (C→K→F→U).
+This repository delivers an interactive Augmented Reality (AR) installation featuring the iconic **Cajueiro** (cashew tree) from Pirangi, RN, Brazil — the living embodiment and central metaphor of the **dm³ system** DM³ and the generative four/five-operator cycle (G = C → K → F → U → E).
 
 ## Overview
 
-The AR overlay activates when your device's camera detects the printed QR target. It displays the tree in 3D space with contextual information, animations, and connections to the mathematical framework (g-series regimes, operator cycle, seed-to-canopy morphogenesis).
+The AR overlay activates when your device's camera detects the printed QR target. It displays the tree in 3D space with contextual information, animations, and connections to the mathematical framework (g-series regimes, operator cycle, seed-to-canopy to forest morphogenesis).
 
 ### Repository Contents
 
@@ -59,9 +59,8 @@ The Cajueiro is not merely a visual: it is the **physical root** of the entire P
 
 - **Main Framework**: https://sluing.github.io/neuro/SBM/1080.html (AXLE Theorem Registry)
 - **GitHub Organization**: https://github.com/TOTOGT
-- **Lean 4 Formalization**: TOTOGT/AXLE
-- **Zenodo Papers**: Search "Pablo Nogueira Grossi" + Principia Orthogona
-
+- **Lean 4 Formalization**: https://totogt.github.io/AXLE
+- **Zenodo Papers**: 
 ## License
 
 - Code: MIT
