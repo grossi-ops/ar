@@ -7,45 +7,27 @@
 <meta name="description" content="Aponte sua câmera para o QR. O cajueiro aparece. Tire selfies.">
 
 <!--
-  ════════════════════════════════════════════════════════════════════════
+  ════════════════════════════════════════════════════════════════════════════
   IMAGE-TRACKING AR — the QR code is the tracker target,
-  and the YouTube/MP4 video plays as a floating screen on top of it.
-  ════════════════════════════════════════════════════════════════════════
+  and the MP4 video plays as a floating screen on top of it.
+  ════════════════════════════════════════════════════════════════════════════
 
-  Files this page expects in the same directory on the Vultr server:
+  Files this page expects in the same directory:
 
-    cajueiro-ar.html   (this file — should be renamed index.html in /cajueiro/)
-    qr-target.mind     (compiled AR tracking target — see ONE-TIME SETUP below)
-    cajueiro.mp4       (your video of the cajueiro — self-hosted, see VIDEO below)
-    qr_with_tree.png   (optional — the printable QR, kept here as a press-kit asset)
+    index.html         (this file)
+    qr-target.mind     (compiled AR tracking target)
+    cajueiro.mp4       (your video — self-hosted or external URL)
+    qr_with_tree.png   (optional — the printable QR)
 
-  ────────────────────────────────────────────────────────────────────────
-  ONE-TIME SETUP — generating qr-target.mind (~2 minutes, browser-only):
+  ────────────────────────────────────────────────────────────────────────────
+  CORS & VIDEO STREAMING FIX:
+  
+  If videos won't play:
+    1. Verify cajueiro.mp4 is served with CORS headers (Content-Type: video/mp4)
+    2. Use raw.githubusercontent.com URLs if on GitHub Pages
+    3. For reliable streaming, host video on a CDN (Vultr, Cloudflare, etc.)
 
-    1. Open https://hiukim.github.io/mind-ar-js-doc/tools/compile in a browser.
-    2. Drag qr_with_tree.png into the page.
-    3. Wait ~30s while it analyses the QR pattern.
-    4. Click "Download" → it saves a file called targets.mind.
-    5. Rename it qr-target.mind and place it next to this HTML file.
-
-  ────────────────────────────────────────────────────────────────────────
-  VIDEO — A-Frame plays MP4 / WebM directly. YouTube iframes won't work
-  as AR textures (DRM + CORS), so you need the MP4 file itself. Options:
-
-    • If the cajueiro video is on YOUR YouTube channel: YouTube Studio
-      → Content → click the video → ⋮ menu → Download
-    • If you have the original file: just upload it directly to Vultr
-    • If it's someone else's video and you don't have rights: don't mirror it,
-      either license it or shoot your own cajueiro footage
-
-  Recommended encoding for AR / mobile:
-    ffmpeg -i source.mov -vf scale=1280:-2 -c:v libx264 -crf 24 -preset slow \
-           -c:a aac -b:a 128k -movflags +faststart cajueiro.mp4
-
-    (-crf 24 keeps quality high; -movflags +faststart lets the browser start
-    playing before fully downloaded; -vf scale=1280 caps width at 1280px,
-    plenty for AR through a phone camera.)
-  ════════════════════════════════════════════════════════════════════════
+  ════════════════════════════════════════════════════════════════════════════
 -->
 
 <!-- A-Frame -->
@@ -161,10 +143,10 @@ a-scene{width:100vw;height:100vh;}
   style="display:none;">
 
   <a-assets>
-    <!-- The self-hosted MP4. PLACE A FILE called cajueiro.mp4 NEXT TO THIS HTML. -->
+    <!-- Self-hosted MP4 via GitHub raw CDN for CORS compatibility -->
     <video
       id="cajueiro-video"
-      src="./cajueiro.mp4"
+      src="https://raw.githubusercontent.com/grossi-ops/ar/main/cajueiro.mp4"
       preload="auto"
       loop
       muted
@@ -288,12 +270,13 @@ a-scene{width:100vw;height:100vh;}
     if (e.message && (e.message.includes('qr-target.mind') || e.message.includes('cajueiro.mp4'))) {
       const gate = document.getElementById('gate');
       const missing = e.message.includes('qr-target.mind') ? 'qr-target.mind' : 'cajueiro.mp4';
+      gate.classList.remove('hidden');
       gate.querySelector('h1').textContent = 'AR ainda não pronta.';
       gate.querySelector('p').innerHTML =
-        'Arquivo ausente: <code>' + missing + '</code>. ' +
+        'Arquivo ausente: <code style="color:#c9a84c;">' + missing + '</code>. ' +
         (missing === 'qr-target.mind'
-          ? 'Compile o QR em <a href="https://hiukim.github.io/mind-ar-js-doc/tools/compile" target="_blank" style="color:#c9a84c;">hiukim.github.io/mind-ar-js-doc/tools/compile</a> e coloque o arquivo nesta pasta.'
-          : 'Faça upload de cajueiro.mp4 (o vídeo do cajueiro) nesta mesma pasta no servidor.');
+          ? 'Compile o QR em <a href="https://hiukim.github.io/mind-ar-js-doc/tools/compile" target="_blank" style="color:#c9a84c;">hiukim.github.io/mind-ar-js-doc/tools/compile</a> e coloque ao lado deste arquivo.'
+          : 'Faça upload de cajueiro.mp4 (o vídeo do cajueiro) nesta mesma pasta.');
       gate.querySelector('button').style.display = 'none';
     }
   }, true);
